@@ -2,13 +2,36 @@ import tkinter as tk
 from tkinter import ttk 
 from ctypes import windll
 from tkinter.messagebox import showinfo
-from functions import start_draw, draw, change_pen_color
+
+
+
+pen_color = "black"
+last_x, last_y = None, None
+
+def start_draw(event):
+    global last_x, last_y
+    last_x, last_y = event.x, event.y
+
+def draw(event, canvas):
+    global last_x, last_y, pen_color
+    if last_x is not None and last_y is not None:
+        size = brush_size.get()
+        canvas.create_line(last_x, last_y, event.x, event.y, width=size, fill=pen_color, capstyle=tk.ROUND, smooth=True)
+    last_x, last_y = event.x, event.y
+
+def change_pen_color(color):
+    global pen_color
+    pen_color = color
+
+def use_eraser():
+    change_pen_color("white")
+
 
 root = tk.Tk()
 
 root.title("Draw app")
 
-message = tk.Label(root, text = "-------------")
+message = tk.Label(root, text = "choose color and draw")
 message.config(font=("Helvetica", 16))
 message.pack()
 
@@ -71,6 +94,26 @@ for i, color in enumerate(colors):
     )
     button.pack(ipadx=5, ipady=5, pady=2)
     buttons.append(button)
+
+brush_size = tk.IntVar(value=2)
+last_x, last_y = None, None
+
+def start_draw(event):
+    global last_x, last_y
+    last_x, last_y = event.x, event.y
+
+def draw(event, canvas):
+    global last_x, last_y, pen_color
+    if last_x is not None and last_y is not None:
+        size = brush_size.get()
+        canvas.create_line(last_x, last_y, event.x, event.y, width=size, fill=pen_color, capstyle=tk.ROUND, smooth=True)
+    last_x, last_y = event.x, event.y
+
+size_label = tk.Label(button_frame, text="Brush size:")
+size_label.pack(pady=5)
+
+size_entry = tk.Entry(button_frame, textvariable=brush_size, width=5)
+size_entry.pack(pady=5)
 
 try:
     from ctypes import windll

@@ -18,3 +18,7 @@ def draw(event, canvas):
 def change_pen_color(color):
     global pen_color
     pen_color = color
+
+def use_eraser():
+    change_pen_color("white")
+
