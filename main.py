@@ -79,7 +79,7 @@ main_frame.columnconfigure(0, weight=1)
 main_frame.columnconfigure(1, weight=0)
 main_frame.rowconfigure(0, weight=1)
 
-colors = ["red", "blue", "green", "yellow", "orange", "purple", "pink", "brown", "gray", "black"]
+colors = ["firebrick2", "blue", "green", "yellow", "orange", "purple", "pink", "brown", "gray", "black"]
 
 
 buttons = []
@@ -90,10 +90,25 @@ for i, color in enumerate(colors):
         text=f"Color {i+1}",
         bg=color,
         fg="white" if color in ["black", "blue", "purple", "brown"] else "black",
-        command=lambda c=color: change_pen_color(c)
+        command=lambda c=color: change_pen_color(c),
+        width=10,  # Stała szerokość
+        height=2   # Stała wysokość
     )
     button.pack(ipadx=5, ipady=5, pady=2)
     buttons.append(button)
+
+eraser_button = tk.Button(
+    button_frame,
+    text="Eraser",
+    bg="white",
+    fg="black",
+    command=use_eraser,  # Funkcja zmieniająca kolor pędzla na biały
+    width=10,  # Stała szerokość
+    height=2   # Stała wysokość
+)
+eraser_button.pack(ipadx=5, ipady=5, pady=2)
+
+
 
 brush_size = tk.IntVar(value=2)
 last_x, last_y = None, None
