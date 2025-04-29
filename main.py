@@ -13,10 +13,10 @@ def start_draw(event):
     global last_x, last_y
     last_x, last_y = event.x, event.y
 
-# Zmienna do przechowywania wybranego stylu pędzla
+
 brush_style = tk.StringVar(value="solid")
 
-# Funkcja do zmiany stylu pędzla
+
 def change_brush_style(style):
     brush_style.set(style)
 
@@ -81,17 +81,6 @@ colors = ["firebrick2", "blue", "green", "yellow", "orange", "purple", "pink", "
 buttons = []
 
 
-empty_button = tk.Button(
-    button_frame,
-    text="choose pen", 
-    bg="white", 
-    fg="black", 
-    width=10,  
-    height=2   
-)
-empty_button.pack(ipadx=5, ipady=5, pady=2)
-
-
 for i, color in enumerate(colors):
     button = tk.Button(
         button_frame,
@@ -145,7 +134,6 @@ size_label.pack(pady=5)
 size_entry = tk.Entry(button_frame, textvariable=brush_size, width=5)
 size_entry.pack(pady=5)
 
-# Dodanie przycisku do rozwijania listy stylów pędzla
 style_button = tk.Menubutton(
     button_frame,
     text="Brush Style",
