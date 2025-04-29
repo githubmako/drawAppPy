@@ -31,10 +31,6 @@ root = tk.Tk()
 
 root.title("Draw app")
 
-message = tk.Label(root, text = "choose color and draw")
-message.config(font=("Helvetica", 16))
-message.pack()
-
 windowHeight = 900
 windowWidth = 1200
 
@@ -49,19 +45,6 @@ root.geometry(f'{windowWidth}x{windowHeight}+{centerX}+{centerY}')
 root.minsize(400,400)
 
 root.attributes('-topmost',1)
-
-exitButton = ttk.Button(
-    root,
-    text = "Exit", 
-    command = lambda: root.quit()
-)
-exitButton.pack(
-    ipadx = 5,
-    ipady = 5,
-    expand = False,
-    side = 'bottom',
-     anchor = 'center'
-)
 
 
 main_frame = tk.Frame(root)
@@ -91,8 +74,8 @@ for i, color in enumerate(colors):
         bg=color,
         fg="white" if color in ["black", "blue", "purple", "brown"] else "black",
         command=lambda c=color: change_pen_color(c),
-        width=10,  # Stała szerokość
-        height=2   # Stała wysokość
+        width=10,  
+        height=2   
     )
     button.pack(ipadx=5, ipady=5, pady=2)
     buttons.append(button)
@@ -102,9 +85,9 @@ eraser_button = tk.Button(
     text="Eraser",
     bg="white",
     fg="black",
-    command=use_eraser,  # Funkcja zmieniająca kolor pędzla na biały
-    width=10,  # Stała szerokość
-    height=2   # Stała wysokość
+    command=use_eraser,  
+    width=10, 
+    height=2   
 )
 eraser_button.pack(ipadx=5, ipady=5, pady=2)
 
