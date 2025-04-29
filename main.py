@@ -4,6 +4,7 @@ from ctypes import windll
 from tkinter.messagebox import showinfo
 
 
+root = tk.Tk()
 
 pen_color = "black"
 last_x, last_y = None, None
@@ -12,11 +13,24 @@ def start_draw(event):
     global last_x, last_y
     last_x, last_y = event.x, event.y
 
+# Zmienna do przechowywania wybranego stylu pędzla
+brush_style = tk.StringVar(value="solid")
+
+# Funkcja do zmiany stylu pędzla
+def change_brush_style(style):
+    brush_style.set(style)
+
 def draw(event, canvas):
     global last_x, last_y, pen_color
     if last_x is not None and last_y is not None:
         size = brush_size.get()
-        canvas.create_line(last_x, last_y, event.x, event.y, width=size, fill=pen_color, capstyle=tk.ROUND, smooth=True)
+        style = brush_style.get()
+        if style == "solid":
+            canvas.create_line(last_x, last_y, event.x, event.y, width=size, fill=pen_color, capstyle=tk.ROUND, smooth=True)
+        elif style == "dotted":
+            canvas.create_line(last_x, last_y, event.x, event.y, width=size, fill=pen_color, dash=(1, 5), capstyle=tk.ROUND, smooth=True)
+        elif style == "dashed":
+            canvas.create_line(last_x, last_y, event.x, event.y, width=size, fill=pen_color, dash=(5, 5), capstyle=tk.ROUND, smooth=True)
     last_x, last_y = event.x, event.y
 
 def change_pen_color(color):
@@ -27,7 +41,6 @@ def use_eraser():
     change_pen_color("white")
 
 
-root = tk.Tk()
 
 root.title("Draw app")
 
@@ -67,6 +80,18 @@ colors = ["firebrick2", "blue", "green", "yellow", "orange", "purple", "pink", "
 
 buttons = []
 
+
+empty_button = tk.Button(
+    button_frame,
+    text="choose pen", 
+    bg="white", 
+    fg="black", 
+    width=10,  
+    height=2   
+)
+empty_button.pack(ipadx=5, ipady=5, pady=2)
+
+
 for i, color in enumerate(colors):
     button = tk.Button(
         button_frame,
@@ -79,6 +104,7 @@ for i, color in enumerate(colors):
     )
     button.pack(ipadx=5, ipady=5, pady=2)
     buttons.append(button)
+
 
 eraser_button = tk.Button(
     button_frame,
@@ -104,7 +130,13 @@ def draw(event, canvas):
     global last_x, last_y, pen_color
     if last_x is not None and last_y is not None:
         size = brush_size.get()
-        canvas.create_line(last_x, last_y, event.x, event.y, width=size, fill=pen_color, capstyle=tk.ROUND, smooth=True)
+        style = brush_style.get()
+        if style == "solid":
+            canvas.create_line(last_x, last_y, event.x, event.y, width=size, fill=pen_color, capstyle=tk.ROUND, smooth=True)
+        elif style == "dotted":
+            canvas.create_line(last_x, last_y, event.x, event.y, width=size, fill=pen_color, dash=(1, 5), capstyle=tk.ROUND, smooth=True)
+        elif style == "dashed":
+            canvas.create_line(last_x, last_y, event.x, event.y, width=size, fill=pen_color, dash=(5, 5), capstyle=tk.ROUND, smooth=True)
     last_x, last_y = event.x, event.y
 
 size_label = tk.Label(button_frame, text="Brush size:")
@@ -112,6 +144,23 @@ size_label.pack(pady=5)
 
 size_entry = tk.Entry(button_frame, textvariable=brush_size, width=5)
 size_entry.pack(pady=5)
+
+# Dodanie przycisku do rozwijania listy stylów pędzla
+style_button = tk.Menubutton(
+    button_frame,
+    text="Brush Style",
+    bg="white",
+    fg="black",
+    width=10,
+    height=2,
+    relief=tk.RAISED
+)
+style_menu = tk.Menu(style_button, tearoff=0)
+style_menu.add_command(label="Solid", command=lambda: change_brush_style("solid"))
+style_menu.add_command(label="Dotted", command=lambda: change_brush_style("dotted"))
+style_menu.add_command(label="Dashed", command=lambda: change_brush_style("dashed"))
+style_button.config(menu=style_menu)
+style_button.pack(ipadx=5, ipady=5, pady=2)
 
 try:
     from ctypes import windll
