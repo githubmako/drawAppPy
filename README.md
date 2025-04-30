@@ -20,4 +20,4 @@ cd Path/To/Your/Folder
 python main.py
 ```
 
-<img src="./img1.png">
+<img src="./img2.png">
