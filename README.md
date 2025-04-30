@@ -11,6 +11,7 @@ git clone https://github.com/githubmako/drawAppPy
 
 ```bash 
 pip install tkinter
+pip install pillow
 ```
 
 ## Compile:
