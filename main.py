@@ -1,8 +1,10 @@
+import os
+os.environ["PATH"] += os.pathsep + r"C:\Program Files\gs\gs10.00.0\bin"
+
 import tkinter as tk 
 from tkinter import ttk 
-from ctypes import windll
-from tkinter.messagebox import showinfo
-
+from tkinter import filedialog, messagebox
+from PIL import Image
 
 root = tk.Tk()
 
@@ -146,9 +148,50 @@ style_button = tk.Menubutton(
 style_menu = tk.Menu(style_button, tearoff=0)
 style_menu.add_command(label="Solid", command=lambda: change_brush_style("solid"))
 style_menu.add_command(label="Dotted", command=lambda: change_brush_style("dotted"))
-style_menu.add_command(label="Dashed", command=lambda: change_brush_style("dashed"))
 style_button.config(menu=style_menu)
 style_button.pack(ipadx=5, ipady=5, pady=2)
+
+
+menu_bar = tk.Menu(root)
+
+
+file_menu = tk.Menu(menu_bar, tearoff=0)
+file_menu.add_command(label="New")
+file_menu.add_command(label="Open")
+file_menu.add_command(label="Save")
+file_menu.add_separator()
+file_menu.add_command(label="Exit", command=root.quit)
+menu_bar.add_cascade(label="File", menu=file_menu)
+
+options_menu = tk.Menu(menu_bar, tearoff=0)
+options_menu.add_command(label="Settings")
+options_menu.add_command(label="Help")
+menu_bar.add_cascade(label="Options", menu=options_menu)
+
+
+root.config(menu=menu_bar)
+
+def save_canvas():
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".png",
+        filetypes=[("PNG files", "*.png"), ("All files", "*.*")]
+    )
+    if file_path:
+        try:
+            # Eksportowanie zawartości płótna do pliku PNG
+            canvas.postscript(file="temp_canvas.ps", colormode='color')
+            img = Image.open("temp_canvas.ps")
+            img.save(file_path, "PNG")
+            messagebox.showinfo("Save", f"File saved successfully as {file_path}")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred while saving the file: {e}")
+
+file_menu.delete(0, "end")  
+file_menu.add_command(label="New")  
+file_menu.add_command(label="Open")  
+file_menu.add_command(label="Save", command=save_canvas)
+file_menu.add_separator()
+file_menu.add_command(label="Exit", command=root.quit)
 
 try:
     from ctypes import windll
