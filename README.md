@@ -19,6 +19,7 @@ pip install pillow
 ```bash
 cd Path/To/Your/Folder
 python main.py
+
 ```
 
 <img src="./img2.png">
