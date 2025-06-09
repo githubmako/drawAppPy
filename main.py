@@ -44,6 +44,8 @@ def use_eraser():
 
 
 
+# test_of_connection
+
 root.title("Draw app")
 
 windowHeight = 900
