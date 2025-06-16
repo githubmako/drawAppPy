@@ -1,12 +1,92 @@
 import os
-os.environ["PATH"] += os.pathsep + r"C:\Program Files\gs\gs10.00.0\bin"
-
-import tkinter as tk 
-from tkinter import ttk 
-from tkinter import filedialog, messagebox
+import tkinter as tk
+from tkinter import ttk, filedialog, messagebox
 from PIL import Image
 
+os.environ["PATH"] += os.pathsep + r"C:\Program Files\gs\gs10.00.0\bin"
+
 root = tk.Tk()
+
+is_saved = True
+current_file_path = None
+
+def mark_unsaved(event=None):
+    global is_saved
+    is_saved = False
+
+def mark_saved():
+    global is_saved
+    is_saved = True
+
+def save_canvas_as():
+    global current_file_path
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".png",
+        filetypes=[("PNG files", "*.png"), ("All files", "*.*")]
+    )
+    if file_path:
+        try:
+            canvas.postscript(file="temp_canvas.ps", colormode='color')
+            img = Image.open("temp_canvas.ps")
+            img.save(file_path, "PNG")
+            messagebox.showinfo("Save", f"File saved successfully as {file_path}")
+            current_file_path = file_path
+            mark_saved()
+            return True
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred while saving the file: {e}")
+    return False
+
+def save_canvas():
+    global current_file_path
+    if current_file_path:
+        try:
+            canvas.postscript(file="temp_canvas.ps", colormode='color')
+            img = Image.open("temp_canvas.ps")
+            img.save(current_file_path, "PNG")
+            messagebox.showinfo("Save", f"File overwritten: {current_file_path}")
+            mark_saved()
+            return True
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred while saving the file: {e}")
+    else:
+        return save_canvas_as()
+    return False
+
+def on_closing():
+    global is_saved, current_file_path
+    if not is_saved:
+        if current_file_path:
+            result = messagebox.askyesnocancel(
+                "Unsaved changes",
+                f"Do you want to overwrite the file?\n{current_file_path}"
+            )
+            if result:  # Yes
+                if save_canvas():
+                    # Po zapisie NIE zamykaj aplikacji
+                    return
+            elif result is False:  # No
+                root.destroy()
+            # Cancel: do nothing
+        else:
+            result = messagebox.askyesnocancel(
+                "Unsaved changes",
+                "Do you want to save your drawing before closing?"
+            )
+            if result:  # Yes
+                if save_canvas_as():
+                    # Po zapisie NIE zamykaj aplikacji
+                    return
+            elif result is False:  # No
+                root.destroy()
+            # Cancel: do nothing
+    else:
+        root.destroy()
+
+
+
+
+
 
 pen_color = "black"
 last_x, last_y = None, None
@@ -62,19 +142,22 @@ root.geometry(f'{windowWidth}x{windowHeight}+{centerX}+{centerY}')
 root.minsize(400,400)
 
 root.attributes('-topmost',1)
-
-
 main_frame = tk.Frame(root)
+canvas = tk.Canvas(main_frame, width=700, height=600, bg='white')
+
+canvas.bind("<B1-Motion>", lambda event: [draw(event, canvas), mark_unsaved()])
+root.protocol("WM_DELETE_WINDOW", on_closing)
+
 main_frame.pack(fill='both', expand=True)
 
+canvas.grid(row=0, column=0, sticky='nsew')
 canvas = tk.Canvas(main_frame, width=700, height=600, bg='white')
 canvas.grid(row=0, column=0, sticky='nsew')
 
 canvas.bind("<Button-1>", start_draw)
-canvas.bind("<B1-Motion>", lambda event: draw(event, canvas))
+canvas.bind("<B1-Motion>", lambda event: [draw(event, canvas), mark_unsaved()])
 button_frame = tk.Frame(main_frame)
-button_frame.grid(row=0, column=1, sticky='ns', padx=10, pady=10)
-
+button_frame.grid(row=0, column=1, sticky='ns')
 main_frame.columnconfigure(0, weight=1)
 main_frame.columnconfigure(1, weight=0)
 main_frame.rowconfigure(0, weight=1)
@@ -150,6 +233,7 @@ style_button = tk.Menubutton(
 style_menu = tk.Menu(style_button, tearoff=0)
 style_menu.add_command(label="Solid", command=lambda: change_brush_style("solid"))
 style_menu.add_command(label="Dotted", command=lambda: change_brush_style("dotted"))
+
 style_button.config(menu=style_menu)
 style_button.pack(ipadx=5, ipady=5, pady=2)
 
