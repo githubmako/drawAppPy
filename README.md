@@ -22,4 +22,3 @@ python main.py
 
 ```
 
-<img src="./img2.png">
